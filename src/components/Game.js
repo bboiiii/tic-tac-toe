@@ -8,8 +8,9 @@ function Game() {
 
   //Declaring a Winner
   useEffect(() => {
-    "Your code here";
-  }, [squares]);
+    const newWinner = calculateWinner(history[history.length - 1].squares);
+    setWinner(newWinner); 
+  }, [history]);
 
   //function to check if a player has won.
   //If a player has won, we can display text such as “Winner: X” or “Winner: O”.
@@ -40,12 +41,42 @@ function Game() {
 
   //Handle player
   const handleClick = (i) => {
-    "Your code here";
+    const currentHistory = history.slice(0, stepNumber + 1);
+    const current = currentHistory[currentHistory.length - 1];
+    const squares = current.squares.slice();
+
+    if (calculateWinner(squares) || squares[i]) {
+      return;
+    }
+
+    squares[i] = xIsNext ? "X" : "O";
+
+    setHistory(
+      currentHistory.concat([
+        {
+          squares: squares,
+        },
+      ])
+    );
+    setStepNumber(currentHistory.length);
+    setXIsNext((prevState) => !prevState);
   };
 
   //Restart game
-  const handlRestart = () => {
-    "Your code here";
+  const handleRestart = () => {
+    setStepNumber(0);
+    setHistory([
+      {
+        squares: Array(9).fill(null),
+      },
+    ]);
+    setXIsNext(true);
+  };
+
+  // undo game
+  const jumpTo = (step) => {
+    setStepNumber(step);
+    setXIsNext(step % 2 === 0);
   };
 
   return (
@@ -53,9 +84,9 @@ function Game() {
       <h2 className="result">Winner is: {winner ? winner : "N/N"}</h2>
       <div className="game">
         <span className="player">Next player is: {xIsNext ? "X" : "O"}</span>
-        <Board squares={"Your code here"} handleClick={"Your code here"} />
+        <Board squares={history[stepNumber].squares} handleClick={handleClick} />
       </div>
-      <button onClick={"Your code here"} className="restart-btn">
+      <button onClick={handleRestart} className="restart-btn">
         Restart
       </button>
     </div>
